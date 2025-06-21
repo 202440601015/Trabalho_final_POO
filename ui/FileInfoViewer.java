@@ -12,6 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import domain.*;
+import technicalservices.*;
+import java.util.List;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class FileInfoViewer extends Application {
 
@@ -21,7 +24,7 @@ public class FileInfoViewer extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Document documentWorker = new Document();
+        //Document documentWorker = new Document();
 
         primaryStage.setTitle("Visualizador de Informações de Arquivo");
 
@@ -36,12 +39,9 @@ public class FileInfoViewer extends Application {
         infoTextArea.setWrapText(true);
         
         Button btnChangeMetadata = new Button("Alterar MetaDados");
-        Button btnChangeType = new Button("Funcionalidade 2");
-        Button btnFeature3 = new Button("Funcionalidade 3");
+        Button btnChangeType = new Button("Converter formato");
+        Button btnFeature3 = new Button("Banco de Dados");
         
-        btnFeature3.setDisable(true);
-
-        // Layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(15, 15, 15, 15));
         grid.setVgap(10);
@@ -59,7 +59,7 @@ public class FileInfoViewer extends Application {
         
         // Adicionando ação para o botão de alterar metadados
         btnChangeMetadata.setOnAction(e -> showMetadataDialog(doc1));
-
+        btnFeature3.setOnAction(e -> showDatabaseOperationsDialog(doc1));
         btnChangeType.setOnAction(e -> changeTypeDialog(doc1));
 
         Scene scene = new Scene(grid, 600, 400);
@@ -210,19 +210,129 @@ public class FileInfoViewer extends Application {
         }
     }
 
-    private String formatFileSize(long bytes) {
-        if (bytes < 1024) return bytes + " bytes";
-        if (bytes < 1024 * 1024) return String.format("%.2f KB", bytes / 1024.0);
-        if (bytes < 1024 * 1024 * 1024) return String.format("%.2f MB", bytes / (1024.0 * 1024));
-        return String.format("%.2f GB", bytes / (1024.0 * 1024 * 1024));
-    }
-
-    private String getFileExtension(String filename) {
-        int dotIndex = filename.lastIndexOf('.');
-        return (dotIndex == -1) ? "Nenhuma" : filename.substring(dotIndex + 1);
-    }
-
     public static void LauchFileSlecetor() {
         launch();
     }
+
+    private void showDatabaseOperationsDialog(Archive doc1) {
+    if (doc1 == null) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Aviso");
+        alert.setHeaderText("Nenhum arquivo selecionado");
+        alert.setContentText("Por favor, selecione um arquivo primeiro.");
+        alert.showAndWait();
+        return;
+    }
+
+    Stage dialog = new Stage();
+    dialog.setTitle("Operações com Banco de Dados");
+
+    Button saveButton = new Button("Salvar no Banco");
+    Button queryButton = new Button("Consultar Banco");
+    Button deleteButton = new Button("Apagar do Banco");
+
+    saveButton.setOnAction(e -> saveToDatabase(doc1, dialog));
+    queryButton.setOnAction(e -> queryDatabase(dialog));
+    deleteButton.setOnAction(e -> deleteFromDatabase(doc1, dialog));
+
+    VBox dialogVBox = new VBox(10);
+    dialogVBox.setPadding(new Insets(15));
+    dialogVBox.getChildren().addAll(
+        new Label("Selecione a operação desejada:"),
+        saveButton,
+        queryButton,
+        deleteButton
+    );
+
+    Scene dialogScene = new Scene(dialogVBox, 300, 200);
+    dialog.setScene(dialogScene);
+    dialog.show();
+}
+
+private void saveToDatabase(Archive doc1, Stage dialog) {
+    try {
+        ArchiveDAO dbMN = new ArchiveDAO();
+        dbMN.save(doc1);
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Sucesso");
+        alert.setHeaderText("Arquivo salvo no banco");
+        alert.setContentText("As informações do arquivo foram salvas com sucesso.");
+        alert.showAndWait();
+        
+    } catch (Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
+        alert.setHeaderText("Falha ao salvar no banco");
+        alert.setContentText("Erro: " + e.getMessage());
+        alert.showAndWait();
+    }
+}
+
+private void queryDatabase(Stage dialog) {
+    try {
+
+        ArchiveDAO dbMN = new ArchiveDAO();
+        dbMN.save(doc1);
+
+        List<Archive> archives = dbMN.listAll();
+        
+        // Criar uma nova janela para exibir os resultados
+        Stage resultStage = new Stage();
+        resultStage.setTitle("Arquivos no Banco de Dados");
+        
+        TableView<Archive> table = new TableView<>();
+        
+        // Criar colunas da tabela
+        TableColumn<Archive, String> pathCol = new TableColumn<>("Caminho");
+        pathCol.setCellValueFactory(new PropertyValueFactory<>("path"));
+        
+        TableColumn<Archive, String> typeCol = new TableColumn<>("Tipo");
+        typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+        
+        table.getColumns().addAll(pathCol, typeCol);
+        table.getItems().addAll(archives);
+        
+        VBox vbox = new VBox(table);
+        Scene scene = new Scene(vbox, 400, 400);
+        resultStage.setScene(scene);
+        resultStage.show();
+        
+    } catch (Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
+        alert.setHeaderText("Falha ao consultar banco");
+        alert.setContentText("Erro: " + e.getMessage());
+        alert.showAndWait();
+    }
+}
+
+private void deleteFromDatabase(Archive doc1, Stage dialog) {
+    /*try {
+        ArchiveDAO dbMN = new ArchvieDAO();
+        boolean deleted = dbMN.deleteArchive(doc1.getPath());
+        
+        if (deleted) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Sucesso");
+            alert.setHeaderText("Arquivo removido");
+            alert.setContentText("O arquivo foi removido do banco de dados.");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Aviso");
+            alert.setHeaderText("Arquivo não encontrado");
+            alert.setContentText("O arquivo não foi encontrado no banco de dados.");
+            alert.showAndWait();
+        }
+        
+    } catch (Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
+        alert.setHeaderText("Falha ao remover do banco");
+        alert.setContentText("Erro: " + e.getMessage());
+        alert.showAndWait();
+    }*/
+}
+
 }
