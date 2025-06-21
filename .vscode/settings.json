@@ -3,13 +3,14 @@
         "."
     ],
     "java.project.referencedLibraries": [
-        "Libs/javafx-sdk-21.0.7/lib/javafx.base.jar",
-        "Libs/javafx-sdk-21.0.7/lib/javafx.controls.jar",
-        "Libs/javafx-sdk-21.0.7/lib/javafx.fxml.jar",
-        "Libs/javafx-sdk-21.0.7/lib/javafx.graphics.jar",
-        "Libs/javafx-sdk-21.0.7/lib/javafx.media.jar",
-        "Libs/javafx-sdk-21.0.7/lib/javafx.swing.jar",
-        "Libs/javafx-sdk-21.0.7/lib/javafx.web.jar",
-        "Libs/javafx-sdk-21.0.7/lib/javafx-swt.jar"
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/javafx/lib/javafx.base.jar",
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/javafx/lib/javafx.controls.jar",
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/javafx/lib/javafx.fxml.jar",
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/javafx/lib/javafx.graphics.jar",
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/javafx/lib/javafx.media.jar",
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/javafx/lib/javafx.swing.jar",
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/javafx/lib/javafx.web.jar",
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/javafx/lib/javafx-swt.jar",
+        "/home/jao/Documents/Estudos/Programação/Avulso/Java/LibsJava/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0.jar"
     ]
 }
