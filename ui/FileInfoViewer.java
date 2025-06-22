@@ -8,9 +8,6 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import domain.*;
 import technicalservices.*;
 import java.util.List;
@@ -21,6 +18,7 @@ public class FileInfoViewer extends Application {
     private TextArea infoTextArea;
     private TextField filePathField;
     private Archive doc1;
+    private ArchiveController controller = new ArchiveController();
 
     @Override
     public void start(Stage primaryStage) {
@@ -164,25 +162,6 @@ public class FileInfoViewer extends Application {
         dialog.show();
     }
 
-    private void processMetadataParameters(String param1, String param2) {
-        // Aqui você implementaria a lógica para processar os parâmetros
-        // Por exemplo, alterar os metadados do arquivo
-        
-        // Exemplo simples apenas para demonstração
-        System.out.println("Parâmetros recebidos:");
-        System.out.println("Parâmetro 1: " + param1);
-        System.out.println("Parâmetro 2: " + param2);
-        
-        // Você poderia chamar algum método do seu Document ou Archive aqui
-        // documentWorker.changeMetadata(doc1, param1, param2);
-        
-        // Mostrar mensagem de sucesso
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sucesso");
-        alert.setHeaderText("Metadados alterados");
-        alert.setContentText("Os parâmetros foram processados com sucesso.");
-        alert.showAndWait();
-    }
 
     private void selectFile(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
@@ -230,10 +209,12 @@ public class FileInfoViewer extends Application {
     Button saveButton = new Button("Salvar no Banco");
     Button queryButton = new Button("Consultar Banco");
     Button deleteButton = new Button("Apagar do Banco");
+    Button updateButton = new Button("Atualizar no Banco");
 
     saveButton.setOnAction(e -> saveToDatabase(doc1, dialog));
     queryButton.setOnAction(e -> queryDatabase(dialog));
     deleteButton.setOnAction(e -> deleteFromDatabase(doc1, dialog));
+    updateButton.setOnAction(e -> updateFromDatabase(doc1));
 
     VBox dialogVBox = new VBox(10);
     dialogVBox.setPadding(new Insets(15));
@@ -249,10 +230,21 @@ public class FileInfoViewer extends Application {
     dialog.show();
 }
 
+private void updateFromDatabase( Archive doc1){
+    try{
+        controller.update(doc1);
+    } catch(Exception e){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
+        alert.setHeaderText("Falha ao salvar no banco");
+        alert.setContentText("Erro: " + e.getMessage());
+        alert.showAndWait();
+    }
+}
+
 private void saveToDatabase(Archive doc1, Stage dialog) {
     try {
-        ArchiveDAO dbMN = new ArchiveDAO();
-        dbMN.save(doc1);
+        controller.save(doc1);
         
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sucesso");
@@ -273,7 +265,7 @@ private void queryDatabase(Stage dialog) {
     try {
 
         ArchiveDAO dbMN = new ArchiveDAO();
-        dbMN.save(doc1);
+        //dbMN.save(doc1);
 
         List<Archive> archives = dbMN.listAll();
         
@@ -308,9 +300,9 @@ private void queryDatabase(Stage dialog) {
 }
 
 private void deleteFromDatabase(Archive doc1, Stage dialog) {
-    /*try {
-        ArchiveDAO dbMN = new ArchvieDAO();
-        boolean deleted = dbMN.deleteArchive(doc1.getPath());
+    try {
+        
+        boolean deleted = controller.delete(doc1);
         
         if (deleted) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -332,7 +324,7 @@ private void deleteFromDatabase(Archive doc1, Stage dialog) {
         alert.setHeaderText("Falha ao remover do banco");
         alert.setContentText("Erro: " + e.getMessage());
         alert.showAndWait();
-    }*/
+    }
 }
 
 }
