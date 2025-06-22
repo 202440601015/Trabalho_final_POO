@@ -49,4 +49,46 @@ public class ArchiveDAO {
         }
         return list;
     }
+
+    public boolean delete(Archive doc) {
+    String sql = "DELETE FROM meta_dados WHERE path = ?";
+    
+    try (
+            Connection conn = Connect.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+    ) {
+        stmt.setString(1, doc.getPath());
+        
+        int rowsAffected = stmt.executeUpdate();
+        
+        // Retorna true se exatamente uma linha foi afetada
+        return rowsAffected == 1;
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+public boolean update(Archive doc) {
+    String sql = "UPDATE meta_dados SET metaData = ? WHERE path = ?";
+    
+    try (
+            Connection conn = Connect.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+    ) {
+        stmt.setString(1, doc.getMetaData());
+        stmt.setString(2, doc.getPath());
+        
+        int rowsAffected = stmt.executeUpdate();
+        
+        // Retorna true se exatamente uma linha foi afetada
+        return rowsAffected == 1;
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
 }
