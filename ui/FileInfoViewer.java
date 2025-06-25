@@ -22,11 +22,9 @@ public class FileInfoViewer extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        //Document documentWorker = new Document();
 
         primaryStage.setTitle("Visualizador de Informações de Arquivo");
 
-        // Componentes da interface
         Button selectFileButton = new Button("Selecionar Arquivo");
         filePathField = new TextField();
         filePathField.setEditable(false);
@@ -55,7 +53,6 @@ public class FileInfoViewer extends Application {
 
         selectFileButton.setOnAction(e -> selectFile(primaryStage));
         
-        // Adicionando ação para o botão de alterar metadados
         btnChangeMetadata.setOnAction(e -> showMetadataDialog(doc1));
         btnFeature3.setOnAction(e -> showDatabaseOperationsDialog(doc1));
         btnChangeType.setOnAction(e -> changeTypeDialog(doc1));
@@ -69,30 +66,23 @@ public class FileInfoViewer extends Application {
         Picture pictureWorker = new Picture();
         System.out.println(doc1.getType());
 
-         // Criar nova janela de diálogo
         Stage dialog = new Stage();
         dialog.setTitle("Alterar formato1");
 
-        // Criar campos de texto
         TextField param1Field = new TextField();
         param1Field.setPromptText("Tag a ser alterada");
 
-        // Botão de ação
         Button applyButton = new Button("Converter");
         applyButton.setOnAction(e -> {
+            
             String param1 = param1Field.getText();
     
-            
-            // Aqui você chamaria o método que processa os parâmetros
             System.out.println(param1);
             pictureWorker.changeType(doc1, param1);
-        
-            
-            // Fecha o diálogo
+    
             dialog.close();
         });
 
-        // Layout do diálogo
         VBox dialogVBox = new VBox(10);
         dialogVBox.setPadding(new Insets(15));
         dialogVBox.getChildren().addAll(
@@ -119,35 +109,28 @@ public class FileInfoViewer extends Application {
             return;
         }
 
-        // Criar nova janela de diálogo
         Stage dialog = new Stage();
         dialog.setTitle("Alterar Metadados");
 
-        // Criar campos de texto
         TextField param1Field = new TextField();
         param1Field.setPromptText("Tag a ser alterada");
         TextField param2Field = new TextField();
         param2Field.setPromptText("Novo Valor da Tag");
 
-        // Botão de ação
         Button applyButton = new Button("Aplicar");
         applyButton.setOnAction(e -> {
             String param1 = param1Field.getText();
             String param2 = param2Field.getText();
             
-            // Aqui você chamaria o método que processa os parâmetros
             System.out.println(param1);
             System.out.println(param2);
             documentWorker.changeMetaData(doc1, param1, param2);
             
-            // Atualiza as informações exibidas
             displayFileInfo();
             
-            // Fecha o diálogo
             dialog.close();
         });
 
-        // Layout do diálogo
         VBox dialogVBox = new VBox(10);
         dialogVBox.setPadding(new Insets(15));
         dialogVBox.getChildren().addAll(
@@ -265,17 +248,14 @@ private void queryDatabase(Stage dialog) {
     try {
 
         ArchiveDAO dbMN = new ArchiveDAO();
-        //dbMN.save(doc1);
-
+        
         List<Archive> archives = dbMN.listAll();
         
-        // Criar uma nova janela para exibir os resultados
         Stage resultStage = new Stage();
         resultStage.setTitle("Arquivos no Banco de Dados");
         
         TableView<Archive> table = new TableView<>();
         
-        // Criar colunas da tabela
         TableColumn<Archive, String> pathCol = new TableColumn<>("Caminho");
         pathCol.setCellValueFactory(new PropertyValueFactory<>("path"));
         

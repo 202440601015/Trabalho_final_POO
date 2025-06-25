@@ -1,5 +1,5 @@
 package technicalservices;
-import technicalservices.Connect;
+import technicalservices.*;
 import domain.Archive;
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,11 +30,12 @@ public class ArchiveDAO {
         String sql = "SELECT * FROM meta_dados";
 
         try (
-                Connection conn = Connect.getConnection(); // Abre a conexão
-                Statement stmt = conn.createStatement();   // Cria um statement simples
-                ResultSet rs = stmt.executeQuery(sql)      // Executa a consulta e obtém os resultados
-        ) {
-            // Enquanto houver registros no resultado da consulta
+                Connection conn = Connect.getConnection(); 
+                Statement stmt = conn.createStatement();   
+                ResultSet rs = stmt.executeQuery(sql)      
+                
+                ) {
+            
             while (rs.next()) {
                 
                 Archive doc = new Archive(rs.getString("path"));
@@ -60,8 +61,6 @@ public class ArchiveDAO {
         stmt.setString(1, doc.getPath());
         
         int rowsAffected = stmt.executeUpdate();
-        
-        // Retorna true se exatamente uma linha foi afetada
         return rowsAffected == 1;
         
     } catch (SQLException e) {
@@ -82,7 +81,6 @@ public boolean update(Archive doc) {
         
         int rowsAffected = stmt.executeUpdate();
         
-        // Retorna true se exatamente uma linha foi afetada
         return rowsAffected == 1;
         
     } catch (SQLException e) {

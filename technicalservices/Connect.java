@@ -16,9 +16,7 @@ public class Connect {
     public static void main(String[] args) {
         try (Connection connection = getConnection()) {
             System.out.println("Conexão com o banco de dados estabelecida!");
-            
-            // Aqui você pode executar suas queries
-            // Exemplo: criar tabela, inserir dados, consultas, etc.
+        
             
         } catch (SQLException e) {
             System.err.println("Erro ao conectar ao banco de dados:");
